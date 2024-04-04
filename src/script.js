@@ -2,18 +2,25 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("#ffffff");
 
 // sizes
-let width = window.innerWidth;
-let height = window.innerHeight;
+const width = window.innerWidth;
+const height = window.innerHeight;
 
 // camera
-const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-camera.position.set(50, 50, 50);
+const aspectRatio = width / height;
+const zoom = 30; // Adjust zoom value to fit your scene
+const camera = new THREE.OrthographicCamera(
+  -zoom * aspectRatio,
+  zoom * aspectRatio,
+  zoom,
+  -zoom,
+  1,
+  1000
+);
+camera.position.set(zoom, zoom, zoom);
 camera.lookAt(scene.position);
-camera.rotation.z = Math.PI / 4;
-camera.rotation.x = -Math.atan(Math.sqrt(2) / Math.sqrt(3));
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(width, height);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
@@ -27,9 +34,9 @@ light.shadow.mapSize.width = 2048;
 light.shadow.mapSize.height = 2048;
 light.shadow.camera.near = 0.5;
 light.shadow.camera.far = 1000;
-light.shadow.camera.right = 50;
-light.shadow.camera.top = 50;
-light.shadow.camera.bottom = -50;
+light.shadow.camera.right = 20;
+light.shadow.camera.top = 20;
+light.shadow.camera.bottom = -20;
 scene.add(light);
 
 // Load GLTF model
@@ -60,7 +67,11 @@ window.addEventListener("resize", function () {
   const width = window.innerWidth;
   const height = window.innerHeight;
   renderer.setSize(width, height);
-  camera.aspect = width / height;
+  const aspectRatio = width / height;
+  camera.left = -zoom * aspectRatio;
+  camera.right = zoom * aspectRatio;
+  camera.top = zoom;
+  camera.bottom = -zoom;
   camera.updateProjectionMatrix();
 });
 
